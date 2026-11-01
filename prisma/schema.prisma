@@ -1,0 +1,70 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model UserProfile {
+  id               String   @id @default(uuid())
+  targetYear       Int      @default(2027)
+  prelimsDate      DateTime @default("2027-05-23T00:00:00.000Z")
+  mainsDate        DateTime @default("2027-08-20T00:00:00.000Z")
+  prelimsPivotDate DateTime @default("2027-03-01T00:00:00.000Z")
+  dailyHours       Float    @default(8.0)
+  studyDaysPerWeek Int      @default(6)
+  gsProficiency    Int      @default(20)
+  psirProficiency  Int      @default(15)
+  csatConfidence   String   @default("MODERATE")
+}
+
+model SyllabusTopic {
+  id           String      @id
+  paper        String
+  section      String
+  title        String
+  officialCode String?
+  tasks        DailyTask[]
+  pyqs         PYQ[]
+}
+
+model DailyTask {
+  id              String        @id @default(uuid())
+  topicId         String
+  topic           SyllabusTopic @relation(fields: [topicId], references: [id])
+  scheduledDate   String
+  dayNumber       Int
+  phase           String
+  sessionNumber   Int
+  subject         String
+  durationHours   Float
+  actionTitle     String
+  stepNotes       String
+  keyConcepts     String
+  expectedOutput  String
+  primarySource   String
+  status          String        @default("NOT_STARTED")
+  personalNotes   String?
+}
+
+model PYQ {
+  id             String        @id @default(uuid())
+  year           Int
+  stage          String
+  paper          String
+  topicId        String
+  topic          SyllabusTopic @relation(fields: [topicId], references: [id])
+  questionText   String
+  questionType   String
+  marks          Int?
+  wordLimit      Int?
+  directiveWord  String?
+  optionsJson    String?
+  correctOption  String?
+  explanation    String?
+  modelIntro     String?
+  modelBody      String?
+  modelConclusion String?
+}
